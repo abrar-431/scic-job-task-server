@@ -77,6 +77,29 @@ async function run() {
         .toArray();
         res.send(result)
     })
+    app.get('/products-count', async(req, res)=>{
+        const brand = req.query.brand;
+        const categoryName = req.query.categoryName;
+        const minPrice = parseFloat(req.query.minPrice);
+        const maxPrice = parseFloat(req.query.maxPrice);
+        const search = req.query.search;
+        let query = {};
+        if(brand){
+            query = {brandName: brand};
+        }
+        if(categoryName){
+            query = {...query, category: categoryName};
+        }
+        if(minPrice || maxPrice){
+           query= {...query, price: {$gte: minPrice, $lte: maxPrice}};
+        }
+        if(search){
+            query = {...query, productName:{$regex: search, $options: 'i'}};
+        }
+        const result = await productCollection.countDocuments(query);
+        console.log(result)
+        res.send({result})
+    })
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
