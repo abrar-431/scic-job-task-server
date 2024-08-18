@@ -31,8 +31,12 @@ async function run() {
     app.get('/products', async(req, res)=>{
         const page = parseInt(req.query.page);
         const items = parseInt(req.query.items);
-        console.log(page, items)
-        const result = await productCollection.find()
+        const brand = req.query.brand;
+        let query = {};
+        if(brand){
+            query = {brandName: brand};
+        }
+        const result = await productCollection.find(query)
         .skip((page-1)*items)
         .limit(items)
         .toArray();
