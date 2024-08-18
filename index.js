@@ -37,6 +37,7 @@ async function run() {
         const minPrice = parseFloat(req.query.minPrice);
         const maxPrice = parseFloat(req.query.maxPrice);
         const search = req.query.search;
+        const sort = req.query.sort;
         let query = {};
         if(brand){
             query = {brandName: brand};
@@ -50,7 +51,20 @@ async function run() {
         if(search){
             query = {...query, productName:{$regex: search, $options: 'i'}};
         }
-        const result = await productCollection.find(query)
+        let options = {}
+        if(sort){
+            if(sort==='asc'){
+                options = {sort: {price: 1}}
+            }
+            else if(sort === 'desc'){
+                options = {sort: {price: -1}}
+            }
+            else{
+                options = {sort: {productCreationDateTime
+                    : -1}}
+            }
+        }
+        const result = await productCollection.find(query, options)
         .skip((page-1)*items)
         .limit(items)
         .toArray();
