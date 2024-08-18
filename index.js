@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const { parse } = require('dotenv');
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
@@ -33,7 +34,10 @@ async function run() {
         const items = parseInt(req.query.items);
         const brand = req.query.brand;
         const categoryName = req.query.categoryName;
-        let query = {};
+        const minPrice = parseFloat(req.query.minPrice);
+        const maxPrice = parseFloat(req.query.maxPrice);
+        let query = {price: {$gte: minPrice, $lte: maxPrice}};
+        console.log(minPrice, maxPrice)
         if(brand){
             query = {brandName: brand};
         }
