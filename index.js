@@ -29,7 +29,13 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
     const productCollection = client.db("productDB").collection("products");
     app.get('/products', async(req, res)=>{
-        const result = await productCollection.find().toArray();
+        const page = parseInt(req.query.page);
+        const items = parseInt(req.query.items);
+        console.log(page, items)
+        const result = await productCollection.find()
+        .skip((page-1)*items)
+        .limit(items)
+        .toArray();
         res.send(result)
     })
   } finally {
