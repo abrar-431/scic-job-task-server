@@ -32,9 +32,13 @@ async function run() {
         const page = parseInt(req.query.page);
         const items = parseInt(req.query.items);
         const brand = req.query.brand;
+        const categoryName = req.query.categoryName;
         let query = {};
         if(brand){
             query = {brandName: brand};
+        }
+        if(categoryName){
+            query = {...query, category: categoryName};
         }
         const result = await productCollection.find(query)
         .skip((page-1)*items)
